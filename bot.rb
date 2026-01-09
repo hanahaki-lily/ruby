@@ -269,6 +269,43 @@ end
 
 # ---------------- MODERATION ----------------
 
+bot.command(:say, required_permissions: [:administrator]) do |event|
+  parts = event.message.content.split(' ', 3)
+
+  unless parts.length >= 3
+    event.respond "Usage: `!say <channel_id> <message>`"
+    next
+  end
+
+  channel_id = parts[1].to_i
+  content = parts[2]
+
+  channel = bot.channel(channel_id)
+  unless channel
+    event.respond "❌ I couldn't find that channel."
+    next
+  end
+
+  embed = Discordrb::Webhooks::Embed.new(
+    description: content,
+    color: EMBED_COLOR
+  )
+
+  embed.author = Discordrb::Webhooks::EmbedAuthor.new(
+    name: event.user.username,
+    icon_url: event.user.avatar_url
+  )
+
+  embed.footer = Discordrb::Webhooks::EmbedFooter.new(
+    text: event.server.name,
+    icon_url: event.server.icon_url
+  )
+
+  channel.send_embed('', embed)
+  event.respond "✅ Embed sent!"
+end
+
+
 bot.command(:kick, required_permissions: [:kick_members]) do |event, user|
   event.server.kick(user)
   event.respond "#{user} was kicked."
