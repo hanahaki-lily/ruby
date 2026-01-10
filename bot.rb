@@ -44,6 +44,15 @@ ALLOWED_COLORS = [
   "Aquamarine", "Diamond", "Onyx", "Amber", "Jade"
 ].map(&:downcase)
 
+# ---------------- HUG MESSAGES ----------------
+HUG_MESSAGES = [
+  "wraps them in a warm hug ❤️",
+  "pulls them close under the moonlight 🌙❤️",
+  "gives the softest, coziest hug ✨❤️",
+  "holds them tight with gentle care 🌸❤️",
+  "shares a comforting hug full of love 💖"
+]
+
 # ---------------- MESSAGE XP + ECONOMY ----------------
 bot.message do |event|
   next if event.user.bot_account?
@@ -120,32 +129,135 @@ end
 
 # ---------------- COMMANDS ----------------
 
+bot.command(:hug) do |event, user_mention|
+  unless user_mention
+    event.respond "Usage: `!hug @user` ❤️"
+    nil
+  end
+
+  match = user_mention.match(/<@!?(\d+)>/)
+  unless match
+    event.respond "Please mention a valid user ❤️"
+    nil
+  end
+
+  server_id = event.server.id.to_s
+  target_id = match[1].to_i
+  target = event.server.member(target_id)
+
+  unless target
+    event.respond "I couldn't find that user 🥺"
+    nil
+  end
+
+  data[server_id] ||= {}
+  data[server_id][event.user.id.to_s] ||= {}
+  data[server_id][event.user.id.to_s]["hugs_given"] ||= 0
+
+  # ❤️ Self-hug
+  if target.id == event.user.id
+    embed = Discordrb::Webhooks::Embed.new(
+      description: "❤️ **#{event.user.display_name}** hugs themselves gently.\nSelf-love is important too ✨",
+      color: EMBED_COLOR
+    )
+
+    embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(
+      url: event.user.avatar_url
+    )
+
+    embed.footer = Discordrb::Webhooks::EmbedFooter.new(
+      text: "Moonlight Palace hugs",
+      icon_url: event.server.icon_url
+    )
+
+    event.channel.send_embed('', embed)
+    nil
+  end
+
+  # Increment hug counter
+  data[server_id][event.user.id.to_s]["hugs_given"] += 1
+  hugs = data[server_id][event.user.id.to_s]["hugs_given"]
+
+  message = HUG_MESSAGES.sample
+
+  embed = Discordrb::Webhooks::Embed.new(
+    description: "❤️ **#{event.user.display_name}** #{message} **#{target.display_name}**",
+    color: EMBED_COLOR
+  )
+
+  embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(
+    url: event.user.avatar_url
+  )
+
+  embed.footer = Discordrb::Webhooks::EmbedFooter.new(
+    text: "Total hugs given: #{hugs} ❤️",
+    icon_url: event.server.icon_url
+  )
+
+  event.channel.send_embed('', embed)
+  save_data(data)
+
+  nil
+end
+
 bot.command(:ping) { |event| event.respond "Pong! 🏓" }
 
 # 🌙 !level
-bot.command(:level) do |event|
+bot.command(:level) do |event, user_mention|
   server_id = event.server.id.to_s
-  user_id = event.user.id.to_s
 
-  user = data.dig(server_id, user_id) || { "xp" => 0, "level" => 1, "gems" => 0 }
+  # Determine target user
+  target =
+    if user_mention
+      match = user_mention.match(/<@!?(\d+)>/)
+      match ? event.server.member(match[1].to_i) : nil
+    else
+      event.user
+    end
 
-  xp = user["xp"]
-  level = user["level"]
-  gems = user["gems"]
+  unless target
+    event.respond "Please mention a valid user ❤️"
+    nil
+  end
+
+  target_id = target.id.to_s
+
+  data[server_id] ||= {}
+  data[server_id][target_id] ||= {
+    "xp" => 0,
+    "level" => 1,
+    "gems" => 0
+  }
+
+  # Rank calculation
+  ranked = data[server_id].sort_by do |_, d|
+    [-d["level"], -d["xp"]]
+  end
+
+  rank_index = ranked.index { |uid, _| uid == target_id }
+  rank = rank_index ? rank_index + 1 : "?"
+
+  crown = rank == 1 ? " 👑" : ""
+
+  xp = data[server_id][target_id]["xp"]
+  level = data[server_id][target_id]["level"]
+  gems = data[server_id][target_id]["gems"]
 
   next_xp = level * 100
   progress = xp % next_xp
 
+  # Progress bar
   blocks = 10
   filled = ((progress.to_f / next_xp) * blocks).round
   bar = "▰" * filled + "▱" * (blocks - filled)
 
   embed = Discordrb::Webhooks::Embed.new(
-    title: "🌙 #{event.user.username}'s Level",
+    title: "🌙 #{target.username}'s Level",
     color: EMBED_COLOR
   )
 
   embed.description = <<~DESC
+    🏆 **Server Rank:** ##{rank}#{crown}
     ✨ **Level:** #{level}
     💎 **Wish Gems:** #{gems}
 
@@ -154,7 +266,7 @@ bot.command(:level) do |event|
   DESC
 
   embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(
-    url: event.user.avatar_url
+    url: target.avatar_url
   )
 
   embed.footer = Discordrb::Webhooks::EmbedFooter.new(
@@ -163,6 +275,7 @@ bot.command(:level) do |event|
   )
 
   event.channel.send_embed('', embed)
+  nil
 end
 
 # ✨ !leaderboard
@@ -172,10 +285,10 @@ bot.command(:leaderboard) do |event|
 
   desc = users
     .sort_by { |_, d| [-d["level"], -d["xp"]] }
-    .first(5)
+    .first(10)
     .map.with_index(1) do |(uid, d), i|
       member = event.server.member(uid.to_i)
-      "#{i}. **#{member&.display_name || 'Unknown'}** — Level #{d['level']} 💎 #{d['gems']}"
+      "#{i}. **#{member&.display_name || 'Unknown'}** — Level: #{d['level']} (XP: #{d['xp']})"
     end.join("\n")
 
   embed = Discordrb::Webhooks::Embed.new(
