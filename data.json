@@ -1,16 +1,16 @@
 {
   "1438793172422623314": {
     "325512370107580417": {
-      "xp": 5925,
-      "level": 60,
-      "gems": 116,
+      "xp": 6658,
+      "level": 67,
+      "gems": 49,
       "last_daily": 1768577016,
       "hugs_given": 8,
       "cards": {
         "Luna": 1,
         "Quillson": 1,
         "Kody": 1,
-        "Bill": 1,
+        "Bill": 2,
         "Gigi": 1,
         "Winnie": 1,
         "Octavian": 1,
@@ -25,18 +25,24 @@
         "Jambette": 1,
         "Bea": 1,
         "Nana": 1,
-        "Felicity": 1
+        "Felicity": 1,
+        "Curt": 1,
+        "Pinky": 1,
+        "Resetti": 1,
+        "Tom Nook": 1,
+        "Joan": 1
       }
     },
     "325471423508250625": {
-      "xp": 890,
-      "level": 9,
-      "gems": 48,
+      "xp": 936,
+      "level": 10,
+      "gems": 12,
       "last_daily": 1767932805,
       "cards": {
         "Eugene": 1,
         "Pascal": 1,
-        "Kabuki": 1
+        "Kabuki": 1,
+        "Redd": 1
       }
     },
     "1398450651297747065": {
@@ -45,33 +51,36 @@
       "gems": 5
     },
     "1147940825330876538": {
-      "xp": 285,
-      "level": 3,
-      "gems": 56
+      "xp": 316,
+      "level": 4,
+      "gems": 61
     },
     "1340248739587166278": {
-      "xp": 124,
+      "xp": 194,
       "level": 2,
-      "gems": 25
+      "gems": 40
     },
     "452679089929846784": {
-      "xp": 2225,
-      "level": 23,
-      "gems": 516,
+      "xp": 2497,
+      "level": 25,
+      "gems": 524,
       "last_daily": 1767953916,
-      "hugs_given": 2
+      "hugs_given": 2,
+      "cards": {
+        "Resetti": 1
+      }
     },
     "183685881897549824": {
-      "xp": 218,
+      "xp": 259,
       "level": 3,
-      "gems": 85,
+      "gems": 89,
       "last_daily": 1767953968,
       "hugs_given": 2
     },
     "718039190935306351": {
-      "xp": 712,
-      "level": 8,
-      "gems": 112,
+      "xp": 885,
+      "level": 9,
+      "gems": 169,
       "last_daily": 0,
       "cards": {
         "Winnie": 1
@@ -81,12 +90,6 @@
       "xp": 39,
       "level": 1,
       "gems": 15,
-      "last_daily": 0
-    },
-    "1451851169122222144": {
-      "xp": 14,
-      "level": 1,
-      "gems": 3,
       "last_daily": 0
     },
     "377188948159758336": {
@@ -100,6 +103,19 @@
       "level": 1,
       "gems": 6,
       "last_daily": 0
+    }
+  },
+  "1444503502914060541": {
+    "325512370107580417": {
+      "xp": 59,
+      "level": 1,
+      "gems": 499806,
+      "last_daily": 0,
+      "cards": {
+        "Vesta": 1,
+        "Carrie": 2,
+        "Octavian": 1
+      }
     }
   }
 }
