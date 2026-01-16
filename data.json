@@ -1,57 +1,104 @@
 {
   "1438793172422623314": {
     "325512370107580417": {
-      "xp": 2232,
-      "level": 23,
-      "gems": 358,
-      "last_daily": 1768059608,
-      "hugs_given": 8
+      "xp": 5925,
+      "level": 60,
+      "gems": 116,
+      "last_daily": 1768577016,
+      "hugs_given": 8,
+      "cards": {
+        "Luna": 1,
+        "Quillson": 1,
+        "Kody": 1,
+        "Bill": 1,
+        "Gigi": 1,
+        "Winnie": 1,
+        "Octavian": 1,
+        "Redd": 1,
+        "Fuchsia": 1,
+        "Lyle": 1,
+        "Camofrog": 1,
+        "Fauna": 1,
+        "Coco": 1,
+        "Shari": 1,
+        "Carmen": 1,
+        "Jambette": 1,
+        "Bea": 1,
+        "Nana": 1,
+        "Felicity": 1
+      }
     },
     "325471423508250625": {
-      "xp": 283,
-      "level": 3,
-      "gems": 72,
-      "last_daily": 1767932805
+      "xp": 890,
+      "level": 9,
+      "gems": 48,
+      "last_daily": 1767932805,
+      "cards": {
+        "Eugene": 1,
+        "Pascal": 1,
+        "Kabuki": 1
+      }
     },
     "1398450651297747065": {
-      "xp": 29,
+      "xp": 62,
       "level": 1,
-      "gems": 0
+      "gems": 5
     },
     "1147940825330876538": {
-      "xp": 70,
-      "level": 1,
-      "gems": 11
+      "xp": 285,
+      "level": 3,
+      "gems": 56
     },
     "1340248739587166278": {
-      "xp": 29,
-      "level": 1,
-      "gems": 3
+      "xp": 124,
+      "level": 2,
+      "gems": 25
     },
     "452679089929846784": {
-      "xp": 529,
-      "level": 6,
-      "gems": 153,
+      "xp": 2225,
+      "level": 23,
+      "gems": 516,
       "last_daily": 1767953916,
       "hugs_given": 2
     },
     "183685881897549824": {
-      "xp": 105,
-      "level": 2,
-      "gems": 67,
+      "xp": 218,
+      "level": 3,
+      "gems": 85,
       "last_daily": 1767953968,
       "hugs_given": 2
     },
     "718039190935306351": {
-      "xp": 94,
-      "level": 1,
-      "gems": 21,
-      "last_daily": 0
+      "xp": 712,
+      "level": 8,
+      "gems": 112,
+      "last_daily": 0,
+      "cards": {
+        "Winnie": 1
+      }
     },
     "207889904892379136": {
-      "xp": 9,
+      "xp": 39,
+      "level": 1,
+      "gems": 15,
+      "last_daily": 0
+    },
+    "1451851169122222144": {
+      "xp": 14,
       "level": 1,
       "gems": 3,
+      "last_daily": 0
+    },
+    "377188948159758336": {
+      "xp": 17,
+      "level": 1,
+      "gems": 5,
+      "last_daily": 0
+    },
+    "1187975310495453188": {
+      "xp": 14,
+      "level": 1,
+      "gems": 6,
       "last_daily": 0
     }
   }

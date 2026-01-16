@@ -7,6 +7,7 @@ TOKEN = ENV['BOT_TOKEN']
 PREFIX = '!'
 
 EMBED_COLOR = 0x9B111E # Ruby Red ❤️
+Thread.report_on_exception = true
 
 bot = Discordrb::Commands::CommandBot.new(
   token: TOKEN,
@@ -14,20 +15,148 @@ bot = Discordrb::Commands::CommandBot.new(
 )
 
 # ---------------- STORAGE ----------------
+
 def load_data
-  File.exist?('data.json') ? JSON.parse(File.read('data.json')) : {}
+  if File.exist?('data.json')
+    content = File.read('data.json').strip
+    return {} if content.empty?
+    begin
+      JSON.parse(content)
+    rescue JSON::ParserError
+      puts "⚠️ data.json is corrupted. Recreating..."
+      {}
+    end
+  else
+    {}
+  end
 end
 
 def save_data(data)
   File.write('data.json', JSON.pretty_generate(data))
 end
 
-data = load_data
+# Load global data
+$data = load_data
 xp_cooldowns = {}
 
 XP_COOLDOWN = 10 # seconds
 DAILY_GEMS = 50
 DAILY_COOLDOWN = 86_400 # 24 hours
+
+# ---------------- Cards ----------------
+
+AMIIBO_CARDS_SERIES_1 = [
+  { name: "Isabelle", image: "https://nookipedia.com/wiki/Special:FilePath/001_Isabelle_amiibo_card_NA.png" },
+  { name: "Tom Nook", image: "https://nookipedia.com/wiki/Special:FilePath/002_Tom_Nook_amiibo_card_NA.png" },
+  { name: "DJ KK", image: "https://nookipedia.com/wiki/Special:FilePath/003_DJ_KK_amiibo_card_NA.png" },
+  { name: "Sable", image: "https://nookipedia.com/wiki/Special:FilePath/004_Sable_amiibo_card_NA.png" },
+  { name: "Kapp'n", image: "https://nookipedia.com/wiki/Special:FilePath/005_Kapp'n_amiibo_card_NA.png" },
+  { name: "Resetti", image: "https://nookipedia.com/wiki/Special:FilePath/006_Resetti_amiibo_card_NA.png" },
+  { name: "Joan", image: "https://nookipedia.com/wiki/Special:FilePath/007_Joan_amiibo_card_NA.png" },
+  { name: "Timmy", image: "https://nookipedia.com/wiki/Special:FilePath/008_Timmy_amiibo_card_NA.png" },
+  { name: "Digby", image: "https://nookipedia.com/wiki/Special:FilePath/009_Digby_amiibo_card_NA.png" },
+  { name: "Pascal", image: "https://nookipedia.com/wiki/Special:FilePath/010_Pascal_amiibo_card_NA.png" },
+  { name: "Harriet", image: "https://nookipedia.com/wiki/Special:FilePath/011_Harriet_amiibo_card_NA.png" },
+  { name: "Redd", image: "https://nookipedia.com/wiki/Special:FilePath/012_Redd_amiibo_card_NA.png" },
+  { name: "Saharah", image: "https://nookipedia.com/wiki/Special:FilePath/013_Saharah_amiibo_card_NA.png" },
+  { name: "Luna", image: "https://nookipedia.com/wiki/Special:FilePath/014_Luna_amiibo_card_NA.png" },
+  { name: "Tortimer", image: "https://nookipedia.com/wiki/Special:FilePath/015_Tortimer_amiibo_card_NA.png" },
+  { name: "Lyle", image: "https://nookipedia.com/wiki/Special:FilePath/016_Lyle_amiibo_card_NA.png" },
+  { name: "Lottie", image: "https://nookipedia.com/wiki/Special:FilePath/017_Lottie_amiibo_card_NA.png" },
+  { name: "Bob", image: "https://nookipedia.com/wiki/Special:FilePath/018_Bob_amiibo_card_NA.png" },
+  { name: "Fauna", image: "https://nookipedia.com/wiki/Special:FilePath/019_Fauna_amiibo_card_NA.png" },
+  { name: "Curt", image: "https://nookipedia.com/wiki/Special:FilePath/020_Curt_amiibo_card_NA.png" },
+  { name: "Portia", image: "https://nookipedia.com/wiki/Special:FilePath/021_Portia_amiibo_card_NA.png" },
+  { name: "Leonardo", image: "https://nookipedia.com/wiki/Special:FilePath/022_Leonardo_amiibo_card_NA.png" },
+  { name: "Cheri", image: "https://nookipedia.com/wiki/Special:FilePath/023_Cheri_amiibo_card_NA.png" },
+  { name: "Kyle", image: "https://nookipedia.com/wiki/Special:FilePath/024_Kyle_amiibo_card_NA.png" },
+  { name: "Al", image: "https://nookipedia.com/wiki/Special:FilePath/025_Al_amiibo_card_NA.png" },
+  { name: "Renée", image: "https://nookipedia.com/wiki/Special:FilePath/026_Renée_amiibo_card_NA.png" },
+  { name: "Lopez", image: "https://nookipedia.com/wiki/Special:FilePath/027_Lopez_amiibo_card_NA.png" },
+  { name: "Jambette", image: "https://nookipedia.com/wiki/Special:FilePath/028_Jambette_amiibo_card_NA.png" },
+  { name: "Rasher", image: "https://nookipedia.com/wiki/Special:FilePath/029_Rasher_amiibo_card_NA.png" },
+  { name: "Tiffany", image: "https://nookipedia.com/wiki/Special:FilePath/030_Tiffany_amiibo_card_NA.png" },
+  { name: "Sheldon", image: "https://nookipedia.com/wiki/Special:FilePath/031_Sheldon_amiibo_card_NA.png" },
+  { name: "Bluebear", image: "https://nookipedia.com/wiki/Special:FilePath/032_Bluebear_amiibo_card_NA.png" },
+  { name: "Bill", image: "https://nookipedia.com/wiki/Special:FilePath/033_Bill_amiibo_card_NA.png" },
+  { name: "Kiki", image: "https://nookipedia.com/wiki/Special:FilePath/034_Kiki_amiibo_card_NA.png" },
+  { name: "Deli", image: "https://nookipedia.com/wiki/Special:FilePath/035_Deli_amiibo_card_NA.png" },
+  { name: "Alli", image: "https://nookipedia.com/wiki/Special:FilePath/036_Alli_amiibo_card_NA.png" },
+  { name: "Kabuki", image: "https://nookipedia.com/wiki/Special:FilePath/037_Kabuki_amiibo_card_NA.png" },
+  { name: "Patty", image: "https://nookipedia.com/wiki/Special:FilePath/038_Patty_amiibo_card_NA.png" },
+  { name: "Jitters", image: "https://nookipedia.com/wiki/Special:FilePath/039_Jitters_amiibo_card_NA.png" },
+  { name: "Gigi", image: "https://nookipedia.com/wiki/Special:FilePath/040_Gigi_amiibo_card_NA.png" },
+  { name: "Quillson", image: "https://nookipedia.com/wiki/Special:FilePath/041_Quillson_amiibo_card_NA.png" },
+  { name: "Marcie", image: "https://nookipedia.com/wiki/Special:FilePath/042_Marcie_amiibo_card_NA.png" },
+  { name: "Puck", image: "https://nookipedia.com/wiki/Special:FilePath/043_Puck_amiibo_card_NA.png" },
+  { name: "Shari", image: "https://nookipedia.com/wiki/Special:FilePath/044_Shari_amiibo_card_NA.png" },
+  { name: "Octavian", image: "https://nookipedia.com/wiki/Special:FilePath/045_Octavian_amiibo_card_NA.png" },
+  { name: "Winnie", image: "https://nookipedia.com/wiki/Special:FilePath/046_Winnie_amiibo_card_NA.png" },
+  { name: "Knox", image: "https://nookipedia.com/wiki/Special:FilePath/047_Knox_amiibo_card_NA.png" },
+  { name: "Sterling", image: "https://nookipedia.com/wiki/Special:FilePath/048_Sterling_amiibo_card_NA.png" },
+  { name: "Bonbon", image: "https://nookipedia.com/wiki/Special:FilePath/049_Bonbon_amiibo_card_NA.png" },
+  { name: "Punchy", image: "https://nookipedia.com/wiki/Special:FilePath/050_Punchy_amiibo_card_NA.png" },
+  { name: "Freya", image: "https://nookipedia.com/wiki/Special:FilePath/051_Freya_amiibo_card_NA.png" },
+  { name: "Bam", image: "https://nookipedia.com/wiki/Special:FilePath/052_Bam_amiibo_card_NA.png" },
+  { name: "Tasha", image: "https://nookipedia.com/wiki/Special:FilePath/053_Tasha_amiibo_card_NA.png" },
+  { name: "Cally", image: "https://nookipedia.com/wiki/Special:FilePath/054_Cally_amiibo_card_NA.png" },
+  { name: "Ed", image: "https://nookipedia.com/wiki/Special:FilePath/055_Ed_amiibo_card_NA.png" },
+  { name: "Lopez", image: "https://nookipedia.com/wiki/Special:FilePath/056_Lopez_amiibo_card_NA.png" },
+  { name: "Nana", image: "https://nookipedia.com/wiki/Special:FilePath/057_Nana_amiibo_card_NA.png" },
+  { name: "Timbra", image: "https://nookipedia.com/wiki/Special:FilePath/058_Timbra_amiibo_card_NA.png" },
+  { name: "Shep", image: "https://nookipedia.com/wiki/Special:FilePath/059_Shep_amiibo_card_NA.png" },
+  { name: "Ankha", image: "https://nookipedia.com/wiki/Special:FilePath/060_Ankha_amiibo_card_NA.png" },
+  { name: "Carmen", image: "https://nookipedia.com/wiki/Special:FilePath/061_Carmen_amiibo_card_NA.png" },
+  { name: "Deirdre", image: "https://nookipedia.com/wiki/Special:FilePath/062_Deirdre_amiibo_card_NA.png" },
+  { name: "Papi", image: "https://nookipedia.com/wiki/Special:FilePath/063_Papi_amiibo_card_NA.png" },
+  { name: "Chester", image: "https://nookipedia.com/wiki/Special:FilePath/064_Chester_amiibo_card_NA.png" },
+  { name: "Sydney", image: "https://nookipedia.com/wiki/Special:FilePath/065_Sydney_amiibo_card_NA.png" },
+  { name: "Diana", image: "https://nookipedia.com/wiki/Special:FilePath/066_Diana_amiibo_card_NA.png" },
+  { name: "Lobo", image: "https://nookipedia.com/wiki/Special:FilePath/067_Lobo_amiibo_card_NA.png" },
+  { name: "Benjamin", image: "https://nookipedia.com/wiki/Special:FilePath/068_Benjamin_amiibo_card_NA.png" },
+  { name: "Melba", image: "https://nookipedia.com/wiki/Special:FilePath/069_Melba_amiibo_card_NA.png" },
+  { name: "Stitches", image: "https://nookipedia.com/wiki/Special:FilePath/070_Stitches_amiibo_card_NA.png" },
+  { name: "Lucky", image: "https://nookipedia.com/wiki/Special:FilePath/071_Lucky_amiibo_card_NA.png" },
+  { name: "Pinky", image: "https://nookipedia.com/wiki/Special:FilePath/072_Pinky_amiibo_card_NA.png" },
+  { name: "Mira", image: "https://nookipedia.com/wiki/Special:FilePath/073_Mira_amiibo_card_NA.png" },
+  { name: "Kabuki", image: "https://nookipedia.com/wiki/Special:FilePath/074_Kabuki_amiibo_card_NA.png" },
+  { name: "Coco", image: "https://nookipedia.com/wiki/Special:FilePath/075_Coco_amiibo_card_NA.png" },
+  { name: "Pango", image: "https://nookipedia.com/wiki/Special:FilePath/076_Pango_amiibo_card_NA.png" },
+  { name: "Bea", image: "https://nookipedia.com/wiki/Special:FilePath/077_Bea_amiibo_card_NA.png" },
+  { name: "Violet", image: "https://nookipedia.com/wiki/Special:FilePath/078_Violet_amiibo_card_NA.png" },
+  { name: "Kody", image: "https://nookipedia.com/wiki/Special:FilePath/079_Kody_amiibo_card_NA.png" },
+  { name: "Raymond", image: "https://nookipedia.com/wiki/Special:FilePath/080_Raymond_amiibo_card_NA.png" },
+  { name: "Fuchsia", image: "https://nookipedia.com/wiki/Special:FilePath/081_Fuchsia_amiibo_card_NA.png" },
+  { name: "Eugene", image: "https://nookipedia.com/wiki/Special:FilePath/082_Eugene_amiibo_card_NA.png" },
+  { name: "Lolly", image: "https://nookipedia.com/wiki/Special:FilePath/083_Lolly_amiibo_card_NA.png" },
+  { name: "Flurry", image: "https://nookipedia.com/wiki/Special:FilePath/084_Flurry_amiibo_card_NA.png" },
+  { name: "Curt", image: "https://nookipedia.com/wiki/Special:FilePath/085_Curt_amiibo_card_NA.png" },
+  { name: "Clay", image: "https://nookipedia.com/wiki/Special:FilePath/086_Clay_amiibo_card_NA.png" },
+  { name: "Alice", image: "https://nookipedia.com/wiki/Special:FilePath/087_Alice_amiibo_card_NA.png" },
+  { name: "Phoebe", image: "https://nookipedia.com/wiki/Special:FilePath/088_Phoebe_amiibo_card_NA.png" },
+  { name: "Anabelle", image: "https://nookipedia.com/wiki/Special:FilePath/089_Anabelle_amiibo_card_NA.png" },
+  { name: "Claude", image: "https://nookipedia.com/wiki/Special:FilePath/090_Claude_amiibo_card_NA.png" },
+  { name: "Cleo", image: "https://nookipedia.com/wiki/Special:FilePath/091_Cleo_amiibo_card_NA.png" },
+  { name: "Vesta", image: "https://nookipedia.com/wiki/Special:FilePath/092_Vesta_amiibo_card_NA.png" },
+  { name: "Camofrog", image: "https://nookipedia.com/wiki/Special:FilePath/093_Camofrog_amiibo_card_NA.png" },
+  { name: "Bertha", image: "https://nookipedia.com/wiki/Special:FilePath/094_Bertha_amiibo_card_NA.png" },
+  { name: "Rodney", image: "https://nookipedia.com/wiki/Special:FilePath/095_Rodney_amiibo_card_NA.png" },
+  { name: "Carrie", image: "https://nookipedia.com/wiki/Special:FilePath/096_Carrie_amiibo_card_NA.png" },
+  { name: "Felicity", image: "https://nookipedia.com/wiki/Special:FilePath/097_Felicity_amiibo_card_NA.png" },
+  { name: "Bud", image: "https://nookipedia.com/wiki/Special:FilePath/098_Bud_amiibo_card_NA.png" },
+  { name: "Violet", image: "https://nookipedia.com/wiki/Special:FilePath/099_Violet_amiibo_card_NA.png" },
+  { name: "Walker", image: "https://nookipedia.com/wiki/Special:FilePath/100_Walker_amiibo_card_NA.png" }
+]
+CARD_COST = 50
+TOTAL_CARDS = AMIIBO_CARDS_SERIES_1.size
+
+# Ensure user exists in the server
+def ensure_user(server_id, user_id)
+  $data[server_id] ||= {}
+  $data[server_id][user_id] ||= { "xp" => 0, "level" => 1, "gems" => 0, "cards" => {} }
+  $data
+end
+
 
 # ---------------- LEVEL ROLES ----------------
 LEVEL_ROLES = {
@@ -65,8 +194,8 @@ bot.message do |event|
   next if now - xp_cooldowns[user_id] < XP_COOLDOWN
   xp_cooldowns[user_id] = now
 
-  data[server_id] ||= {}
-  data[server_id][user_id] ||= {
+  $data[server_id] ||= {}
+  $data[server_id][user_id] ||= {
     "xp" => 0,
     "level" => 1,
     "gems" => 0,
@@ -76,22 +205,22 @@ bot.message do |event|
   xp_gain = rand(5..15)
   gem_gain = rand(1..3)
 
-  data[server_id][user_id]["xp"] += xp_gain
-  data[server_id][user_id]["gems"] += gem_gain
+  $data[server_id][user_id]["xp"] += xp_gain
+  $data[server_id][user_id]["gems"] += gem_gain
 
   leveled_up = false
 
   loop do
-    level = data[server_id][user_id]["level"]
+    level = $data[server_id][user_id]["level"]
     required_xp = level * 100
-    break if data[server_id][user_id]["xp"] < required_xp
+    break if $data[server_id][user_id]["xp"] < required_xp
 
-    data[server_id][user_id]["level"] += 1
+    $data[server_id][user_id]["level"] += 1
     leveled_up = true
   end
 
   if leveled_up
-    new_level = data[server_id][user_id]["level"]
+    new_level = $data[server_id][user_id]["level"]
 
     embed = Discordrb::Webhooks::Embed.new(
       title: "🌸 Level Up!",
@@ -124,7 +253,7 @@ bot.message do |event|
     end
   end
 
-  save_data(data)
+  save_data($data)
 end
 
 # ---------------- COMMANDS ----------------
@@ -150,9 +279,9 @@ bot.command(:hug) do |event, user_mention|
     nil
   end
 
-  data[server_id] ||= {}
-  data[server_id][event.user.id.to_s] ||= {}
-  data[server_id][event.user.id.to_s]["hugs_given"] ||= 0
+  $data[server_id] ||= {}
+  $data[server_id][event.user.id.to_s] ||= {}
+  $data[server_id][event.user.id.to_s]["hugs_given"] ||= 0
 
   # ❤️ Self-hug
   if target.id == event.user.id
@@ -175,8 +304,8 @@ bot.command(:hug) do |event, user_mention|
   end
 
   # Increment hug counter
-  data[server_id][event.user.id.to_s]["hugs_given"] += 1
-  hugs = data[server_id][event.user.id.to_s]["hugs_given"]
+  $data[server_id][event.user.id.to_s]["hugs_given"] += 1
+  hugs = $data[server_id][event.user.id.to_s]["hugs_given"]
 
   message = HUG_MESSAGES.sample
 
@@ -195,7 +324,7 @@ bot.command(:hug) do |event, user_mention|
   )
 
   event.channel.send_embed('', embed)
-  save_data(data)
+  save_data($data)
 
   nil
 end
@@ -217,40 +346,48 @@ bot.command(:level) do |event, user_mention|
 
   unless target
     event.respond "Please mention a valid user ❤️"
-    nil
+    next
   end
 
   target_id = target.id.to_s
 
-  data[server_id] ||= {}
-  data[server_id][target_id] ||= {
+  $data[server_id] ||= {}
+  $data[server_id][target_id] ||= {
     "xp" => 0,
     "level" => 1,
     "gems" => 0
   }
 
   # Rank calculation
-  ranked = data[server_id].sort_by do |_, d|
+  ranked = $data[server_id].sort_by do |_, d|
     [-d["level"], -d["xp"]]
   end
 
   rank_index = ranked.index { |uid, _| uid == target_id }
   rank = rank_index ? rank_index + 1 : "?"
-
   crown = rank == 1 ? " 👑" : ""
 
-  xp = data[server_id][target_id]["xp"]
-  level = data[server_id][target_id]["level"]
-  gems = data[server_id][target_id]["gems"]
+  xp    = $data[server_id][target_id]["xp"]
+  level = $data[server_id][target_id]["level"]
+  gems  = $data[server_id][target_id]["gems"]
 
-  next_xp = level * 100
-  progress = xp % next_xp
+  # ---------------- XP PROGRESS (CUMULATIVE) ----------------
+  current_level_total = (level - 1) * 100
+  next_level_total    = level * 100
+
+  progress_xp = xp - current_level_total
+  needed_xp   = next_level_total - current_level_total
+
+  progress_xp = [progress_xp, 0].max
 
   # Progress bar
   blocks = 10
-  filled = ((progress.to_f / next_xp) * blocks).round
+  filled = ((progress_xp.to_f / needed_xp) * blocks).floor
+  filled = [[filled, 0].max, blocks].min
+
   bar = "▰" * filled + "▱" * (blocks - filled)
 
+  # ---------------- EMBED ----------------
   embed = Discordrb::Webhooks::Embed.new(
     title: "🌙 #{target.username}'s Level",
     color: EMBED_COLOR
@@ -262,7 +399,7 @@ bot.command(:level) do |event, user_mention|
     💎 **Wish Gems:** #{gems}
 
     #{bar}
-    #{progress}/#{next_xp} XP
+    #{progress_xp}/#{needed_xp} XP
   DESC
 
   embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(
@@ -281,7 +418,7 @@ end
 # ✨ !leaderboard
 bot.command(:leaderboard) do |event|
   server_id = event.server.id.to_s
-  users = data[server_id] || {}
+  users = $data[server_id] || {}
 
   desc = users
     .sort_by { |_, d| [-d["level"], -d["xp"]] }
@@ -348,15 +485,15 @@ bot.command(:daily) do |event|
   user_id = event.user.id.to_s
   now = Time.now.to_i
 
-  data[server_id] ||= {}
-  data[server_id][user_id] ||= {
+  $data[server_id] ||= {}
+  $data[server_id][user_id] ||= {
     "xp" => 0,
     "level" => 1,
     "gems" => 0,
     "last_daily" => 0
   }
 
-  user = data[server_id][user_id]
+  user = $data[server_id][user_id]
 
   # Ensure last_daily always exists
   user["last_daily"] ||= 0
@@ -374,11 +511,10 @@ bot.command(:daily) do |event|
 
   user["gems"] += DAILY_GEMS
   user["last_daily"] = now
-  save_data(data)
+  save_data($data)
 
   event.respond "🎁 You claimed **#{DAILY_GEMS} 💎 Wish Gems**!"
 end
-
 
 # ---------------- MODERATION ----------------
 
@@ -438,6 +574,71 @@ bot.command(:unban, required_permissions: [:ban_members]) do |event, user_id|
   event.respond "🔓 User unbanned."
 rescue
   event.respond "Could not unban that user."
+end
+
+# ---------------- !wish command ----------------
+
+bot.command(:wish) do |event|
+  server_id = event.server.id.to_s
+  user_id = event.user.id.to_s
+
+  ensure_user(server_id, user_id)
+  user = $data[server_id][user_id]
+  user["cards"] ||= {}
+
+  if user["gems"] < CARD_COST
+    event.respond "❌ You need #{CARD_COST} gems to wish!"
+    next
+  end
+
+  user["gems"] -= CARD_COST
+
+  card = AMIIBO_CARDS_SERIES_1.sample
+  user["cards"][card[:name]] ||= 0
+  user["cards"][card[:name]] += 1
+
+  save_data($data)
+
+  event.channel.send_embed do |e|
+    e.title = "🎴 #{event.user.name} drew **#{card[:name]}**!"
+    e.image = Discordrb::Webhooks::EmbedImage.new(url: card[:image])
+    e.color = 0xFFB6C1
+    e.footer = Discordrb::Webhooks::EmbedFooter.new(
+      text: "Gems remaining: #{user['gems']}"
+    )
+  end
+end
+
+
+# ---------------- !collection command ----------------
+
+bot.command(:collection) do |event|
+  server_id = event.server.id.to_s
+  user_id = event.user.id.to_s
+  ensure_user(server_id, user_id)
+  user = $data[server_id][user_id]
+
+  cards_owned = user["cards"] || {}
+  total_owned = cards_owned.values.sum
+  unique_owned = cards_owned.keys.size
+
+  if cards_owned.empty?
+    event.respond "❌ You don't have any cards yet! Try `!wish` to draw some."
+    next
+  end
+
+  description = cards_owned.map do |name, count|
+    "#{name}: #{count}"
+  end.join("\n")
+
+  event.channel.send_embed do |e|
+    e.title = "#{event.user.name}'s Collection"
+    e.description = description
+    e.footer = Discordrb::Webhooks::EmbedFooter.new(
+      text: "Unique cards: #{unique_owned}/#{TOTAL_CARDS} | Total cards: #{total_owned}"
+    )
+    e.color = 0xFFD700
+  end
 end
 
 puts "Ruby is ready! 🌸"
