@@ -1,10 +1,10 @@
 {
   "1438793172422623314": {
     "325512370107580417": {
-      "xp": 6740,
-      "level": 68,
-      "gems": 65,
-      "last_daily": 1768577016,
+      "xp": 7162,
+      "level": 72,
+      "gems": 7,
+      "last_daily": 1768678436,
       "hugs_given": 11,
       "cards": {
         "Luna": 1,
@@ -29,20 +29,24 @@
         "Curt": 1,
         "Pinky": 1,
         "Resetti": 1,
-        "Tom Nook": 1,
-        "Joan": 1
+        "Tom Nook": 2,
+        "Joan": 1,
+        "Melba": 1,
+        "Kiki": 1,
+        "Cally": 1
       }
     },
     "325471423508250625": {
-      "xp": 936,
+      "xp": 989,
       "level": 10,
-      "gems": 12,
-      "last_daily": 1767932805,
+      "gems": 23,
+      "last_daily": 1768678752,
       "cards": {
         "Eugene": 1,
         "Pascal": 1,
         "Kabuki": 1,
-        "Redd": 1
+        "Redd": 1,
+        "Sheldon": 1
       }
     },
     "1398450651297747065": {
@@ -51,20 +55,20 @@
       "gems": 5
     },
     "1147940825330876538": {
-      "xp": 316,
-      "level": 4,
-      "gems": 61
+      "xp": 409,
+      "level": 5,
+      "gems": 77
     },
     "1340248739587166278": {
-      "xp": 199,
-      "level": 2,
-      "gems": 42,
+      "xp": 297,
+      "level": 3,
+      "gems": 62,
       "hugs_given": 1
     },
     "452679089929846784": {
-      "xp": 2497,
-      "level": 25,
-      "gems": 524,
+      "xp": 2743,
+      "level": 28,
+      "gems": 578,
       "last_daily": 1767953916,
       "hugs_given": 2,
       "cards": {
@@ -72,16 +76,16 @@
       }
     },
     "183685881897549824": {
-      "xp": 286,
-      "level": 3,
-      "gems": 95,
+      "xp": 322,
+      "level": 4,
+      "gems": 102,
       "last_daily": 1767953968,
       "hugs_given": 3
     },
     "718039190935306351": {
-      "xp": 899,
-      "level": 9,
-      "gems": 170,
+      "xp": 907,
+      "level": 10,
+      "gems": 171,
       "last_daily": 0,
       "cards": {
         "Winnie": 1
@@ -103,6 +107,13 @@
       "xp": 14,
       "level": 1,
       "gems": 6,
+      "last_daily": 0
+    },
+    "1188378118088568924": {
+      "xp": 6,
+      "level": 1,
+      "gems": 2,
+      "cards": {},
       "last_daily": 0
     }
   },
