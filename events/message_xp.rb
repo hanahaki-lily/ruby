@@ -20,7 +20,7 @@ def register_message_xp(bot)
     ensure_user(server_id, user_id)
     user = $data[server_id][user_id]
 
-    # ---------------- XP + GEMS ----------------
+    # ---------------- XP + GEMS (per message) ----------------
 
     xp_gain  = rand(5..15)
     gem_gain = rand(1..3)
@@ -30,7 +30,7 @@ def register_message_xp(bot)
 
     # ---------------- LEVELING ----------------
 
-    leveled_up = false
+    levels_gained = 0
 
     loop do
       level = user["level"]
@@ -38,17 +38,23 @@ def register_message_xp(bot)
       break if user["xp"] < required_xp
 
       user["level"] += 1
-      leveled_up = true
+      levels_gained += 1
     end
 
     # ---------------- LEVEL UP EVENT ----------------
 
-    if leveled_up
+    if levels_gained > 0
       new_level = user["level"]
+      reward_gems = levels_gained * GEMS_PER_LEVEL
+
+      user["gems"] += reward_gems
 
       embed = Discordrb::Webhooks::Embed.new(
         title: "🌸 Level Up!",
-        description: "#{event.user.mention} reached **Level #{new_level}** ✨",
+        description: <<~DESC,
+          #{event.user.mention} reached **Level #{new_level}** ✨
+          💎 **+#{reward_gems} Wish Gems**
+        DESC
         color: EMBED_COLOR
       )
 

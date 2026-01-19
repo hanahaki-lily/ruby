@@ -1,5 +1,6 @@
 require 'discordrb'
 require 'dotenv/load'
+require 'colorize'
 
 require_relative 'config/constants'
 require_relative 'helpers/storage'
@@ -35,5 +36,5 @@ register_color(bot)
 register_moderation(bot)
 register_ping(bot)
 
-puts "Ruby is ready! 🌸"
+puts "Ruby is ready! 🌸".red
 bot.run
