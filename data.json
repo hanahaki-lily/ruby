@@ -1,9 +1,9 @@
 {
   "1438793172422623314": {
     "325512370107580417": {
-      "xp": 8682,
-      "level": 87,
-      "gems": 177,
+      "xp": 9093,
+      "level": 91,
+      "gems": 55,
       "last_daily": 1768836619,
       "hugs_given": 11,
       "cards": {
@@ -46,13 +46,18 @@
         "Deirdre": 1,
         "Marcie": 1,
         "Lolly": 1,
-        "Kabuki": 1
+        "Kabuki": 1,
+        "Bluebear": 1,
+        "Walker": 1,
+        "Bam": 1,
+        "Benjamin": 1,
+        "Punchy": 1
       }
     },
     "325471423508250625": {
-      "xp": 1267,
-      "level": 13,
-      "gems": 157,
+      "xp": 1371,
+      "level": 14,
+      "gems": 138,
       "last_daily": 1768770720,
       "cards": {
         "Eugene": 1,
@@ -61,19 +66,14 @@
         "Redd": 1,
         "Sheldon": 1,
         "Anabelle": 1,
-        "Saharah": 1
+        "Saharah": 1,
+        "Bob": 1
       }
     },
-    "1398450651297747065": {
-      "xp": 62,
-      "level": 1,
-      "gems": 50000000,
-      "cards": {}
-    },
     "1147940825330876538": {
-      "xp": 966,
-      "level": 10,
-      "gems": 279,
+      "xp": 1006,
+      "level": 11,
+      "gems": 296,
       "cards": {}
     },
     "1340248739587166278": {
@@ -102,9 +102,9 @@
       "cards": {}
     },
     "718039190935306351": {
-      "xp": 924,
+      "xp": 966,
       "level": 10,
-      "gems": 276,
+      "gems": 283,
       "last_daily": 0,
       "cards": {
         "Winnie": 1

@@ -35,6 +35,8 @@ register_daily(bot)
 register_color(bot)
 register_moderation(bot)
 register_ping(bot)
+register_card(bot)
+register_help(bot)
 
 puts "Ruby is ready! 🌸".red
 bot.run

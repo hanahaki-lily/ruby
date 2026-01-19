@@ -21,8 +21,8 @@ LEVEL_ROLES = {
 # ---------------- Cards ----------------
 
 AMIIBO_CARDS_SERIES_1 = [
-  { name: "Isabelle", image: "https://nookipedia.com/wiki/Special:FilePath/001_Isabelle_amiibo_card_NA.png" },
-  { name: "Tom Nook", image: "https://nookipedia.com/wiki/Special:FilePath/002_Tom_Nook_amiibo_card_NA.png" },
+  { name: "Isabelle", image: "https://amiibo.life/assets/figures/amiibo/animal-crossing-cards-series-1/isabelle-737c40e71ee1d2a769460fb80b7b8a4efd6ecfdc2094228325b27c0227b25eec.png" },
+  { name: "Tom Nook", image: "https://amiibo.life/assets/figures/amiibo/animal-crossing-cards-series-1/tom-nook-d5f33139e0c214f67e8a72b0e1a5449db37c191060eaf2af7fed4c6c0d01c068.png" },
   { name: "DJ KK", image: "https://nookipedia.com/wiki/Special:FilePath/003_DJ_KK_amiibo_card_NA.png" },
   { name: "Sable", image: "https://nookipedia.com/wiki/Special:FilePath/004_Sable_amiibo_card_NA.png" },
   { name: "Kapp'n", image: "https://nookipedia.com/wiki/Special:FilePath/005_Kapp'n_amiibo_card_NA.png" },
