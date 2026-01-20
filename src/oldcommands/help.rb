@@ -1,9 +1,6 @@
-# help.rb
-# frozen_string_literal: true
 require 'discordrb'
 require_relative '../config/constants'
 
-# Manually store descriptions for your commands
 COMMAND_DESCRIPTIONS = {
   collection: "View your full card collection.",
   card: "View a specific card by name: !card <cardname>.",
@@ -20,7 +17,6 @@ COMMAND_DESCRIPTIONS = {
   kick: "Kick a user from the server.",
   ban: "Ban a user from the server.",
   unban: "Unban a user from the server."
-  # add more as needed
 }
 
 def register_help(bot)

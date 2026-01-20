@@ -1,6 +1,5 @@
 def register_moderation(bot)
 
-  # 🗣️ !say (admin-only embed relay)
   bot.command(:say, required_permissions: [:administrator]) do |event|
     parts = event.message.content.split(' ', 3)
 
@@ -38,7 +37,6 @@ def register_moderation(bot)
     nil
   end
 
-  # 👢 !kick
   bot.command(:kick, required_permissions: [:kick_members]) do |event, user|
     unless user
       event.respond "Usage: `!kick @user`"
@@ -52,7 +50,6 @@ def register_moderation(bot)
     event.respond "❌ Could not kick that user."
   end
 
-  # 🔨 !ban
   bot.command(:ban, required_permissions: [:ban_members]) do |event, user|
     unless user
       event.respond "Usage: `!ban @user`"
@@ -66,7 +63,6 @@ def register_moderation(bot)
     event.respond "❌ Could not ban that user."
   end
 
-  # 🔓 !unban
   bot.command(:unban, required_permissions: [:ban_members]) do |event, user_id|
     unless user_id
       event.respond "Usage: `!unban <user_id>`"

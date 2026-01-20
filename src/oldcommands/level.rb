@@ -2,7 +2,6 @@ def register_level(bot)
   bot.command(:level) do |event, user_mention|
     server_id = event.server.id.to_s
 
-    # Determine target user
     target =
       if user_mention
         match = user_mention.match(/<@!?(\d+)>/)
@@ -18,7 +17,6 @@ def register_level(bot)
 
     target_id = target.id.to_s
 
-    # Ensure user data exists (IMPORTANT for modular setup)
     ensure_user(server_id, target_id)
     user_data = $data[server_id][target_id]
 

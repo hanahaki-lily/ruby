@@ -14,7 +14,6 @@ def register_color(bot)
       next
     end
 
-    # Remove existing color roles
     event.user.roles
       .select { |r| ALLOWED_COLORS.include?(r.name.downcase) }
       .each { |r| event.user.remove_role(r) }

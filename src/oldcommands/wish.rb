@@ -15,7 +15,7 @@ def register_wish(bot)
 
     user["gems"] -= CARD_COST
 
-    card = AMIIBO_CARDS_SERIES_1.sample
+    card = AMIIBO_CARDS.sample
     user["cards"][card[:name]] ||= 0
     user["cards"][card[:name]] += 1
 

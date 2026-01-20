@@ -1,5 +1,3 @@
-# card.rb
-# frozen_string_literal: true
 require 'discordrb'
 require 'json'
 require_relative '../config/constants'
@@ -15,7 +13,6 @@ def register_card(bot)
       next
     end
 
-    # Load data.json safely
     user_data = {}
     if File.exist?('data.json')
       file_content = File.read('data.json').strip
@@ -29,18 +26,15 @@ def register_card(bot)
       end
     end
 
-    # Fetch the user's cards (safely)
     cards_owned = user_data.dig(server_id, user_id, "cards") || {}
 
-    # Find the card in constants.rb (case-insensitive)
-    matched_card = AMIIBO_CARDS_SERIES_1.find { |c| c[:name].downcase == card_name_input }
+    matched_card = AMIIBO_CARDS.find { |c| c[:name].downcase == card_name_input }
 
     if matched_card.nil?
       event.respond "I couldn't find a card named '#{args.join(' ')}' 🌙"
       next
     end
 
-    # Check if user owns it
     owned_count = cards_owned.find { |name, _| name.downcase == matched_card[:name].downcase }&.last || 0
 
     if owned_count <= 0
@@ -48,7 +42,6 @@ def register_card(bot)
       next
     end
 
-    # Send embed
     event.channel.send_embed do |embed|
       embed.title = "#{matched_card[:name]} 🌸"
       embed.description = "You own **#{owned_count}** of this card!"

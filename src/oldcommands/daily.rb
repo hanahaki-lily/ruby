@@ -4,11 +4,9 @@ def register_daily(bot)
     user_id   = event.user.id.to_s
     now       = Time.now.to_i
 
-    # Ensure user data exists
     ensure_user(server_id, user_id)
     user = $data[server_id][user_id]
 
-    # Ensure last_daily exists
     user["last_daily"] ||= 0
 
     elapsed = now - user["last_daily"]

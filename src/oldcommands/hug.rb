@@ -21,12 +21,10 @@ def register_hug(bot)
       next
     end
 
-    # Ensure user data exists
     ensure_user(server_id, author_id)
     user = $data[server_id][author_id]
     user["hugs_given"] ||= 0
 
-    # ❤️ Self-hug
     if target.id == event.user.id
       embed = Discordrb::Webhooks::Embed.new(
         description: "❤️ **#{event.user.display_name}** hugs themselves gently.\nSelf-love is important too ✨",
@@ -46,7 +44,6 @@ def register_hug(bot)
       next
     end
 
-    # 💕 Normal hug
     user["hugs_given"] += 1
     hugs = user["hugs_given"]
 

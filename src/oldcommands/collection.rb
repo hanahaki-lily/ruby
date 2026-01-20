@@ -17,7 +17,6 @@ def register_collection(bot)
     total_owned  = cards_owned.values.sum
     unique_owned = cards_owned.keys.size
 
-    # Optional: alphabetical display
     description = cards_owned
       .sort_by { |name, _| name }
       .map { |name, count| "#{name}: #{count}" }

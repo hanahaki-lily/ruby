@@ -2,8 +2,10 @@ require 'discordrb'
 require 'dotenv/load'
 require 'colorize'
 
-require_relative 'config/constants'
-require_relative 'helpers/storage'
+require_relative 'src/config/constants'
+require_relative 'src/helpers/storage'
+require_relative 'src/utils/data_handler'
+
 
 bot = Discordrb::Commands::CommandBot.new(
   token: TOKEN,
@@ -12,15 +14,15 @@ bot = Discordrb::Commands::CommandBot.new(
 
 $data = load_data
 
-require_relative 'events/ready_cleanup'
-require_relative 'events/message_xp'
-require_relative 'events/member_leave'
+require_relative 'src/oldevents/ready_cleanup'
+require_relative 'src/oldevents/message_xp'
+require_relative 'src/oldevents/member_leave'
 
 register_ready_cleanup(bot)
 register_message_xp(bot)
 register_member_leave(bot)
 
-Dir[File.join(__dir__, 'commands', '*.rb')].each { |file| require file }
+Dir[File.join(__dir__, 'src/oldcommands', '*.rb')].each { |file| require file }
 
 register_level(bot)
 register_leaderboard(bot)

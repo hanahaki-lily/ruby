@@ -1,6 +1,5 @@
 def register_devset(bot)
   bot.command(:devset) do |event, user_mention, stat, amount|
-    # 🔒 Dev-only check
     unless DEVELOPER_IDS.include?(event.user.id.to_s)
       event.respond "❌ This command is developer-only."
       next
@@ -42,7 +41,6 @@ def register_devset(bot)
     case stat
     when "level"
       user["level"] = [amount, 1].max
-      # Normalize XP to current level
       user["xp"] = (user["level"] - 1) * 100
     when "xp"
       min_xp = (user["level"] - 1) * 100
@@ -51,7 +49,6 @@ def register_devset(bot)
       user["gems"] = [amount, 0].max
     end
 
-    # Ensure XP/gems never go negative
     user["xp"]   = [user["xp"], 0].max
     user["gems"] = [user["gems"], 0].max
 

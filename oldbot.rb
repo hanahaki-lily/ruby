@@ -10,7 +10,7 @@ DEVELOPER_IDS = [
   "325512370107580417"
 ]
 
-EMBED_COLOR = 0x9B111E # Ruby Red ❤️
+EMBED_COLOR = 0x9B111E
 Thread.report_on_exception = true
 
 bot = Discordrb::Commands::CommandBot.new(
@@ -54,13 +54,12 @@ def save_data(data)
   File.write('data.json', JSON.pretty_generate(data))
 end
 
-# Load global data
 $data = load_data
 xp_cooldowns = {}
 
-XP_COOLDOWN = 10 # seconds
+XP_COOLDOWN = 10
 DAILY_GEMS = 50
-DAILY_COOLDOWN = 86_400 # 24 hours
+DAILY_COOLDOWN = 86_400
 
 # ---------------- Cards ----------------
 
@@ -169,7 +168,6 @@ AMIIBO_CARDS_SERIES_1 = [
 CARD_COST = 50
 TOTAL_CARDS = AMIIBO_CARDS_SERIES_1.size
 
-# Ensure user exists in the server
 def ensure_user(server_id, user_id)
   $data[server_id] ||= {}
   $data[server_id][user_id] ||= { "xp" => 0, "level" => 1, "gems" => 0, "cards" => {} }
@@ -259,12 +257,10 @@ bot.message do |event|
 
     event.channel.send_embed('', embed)
 
-    # Remove old level roles
     event.user.roles
       .select { |r| LEVEL_ROLES.values.include?(r.name) }
       .each { |r| event.user.remove_role(r) }
 
-    # Assign highest valid role
     LEVEL_ROLES.sort.each do |lvl, role_name|
       if new_level >= lvl
         role = event.server.roles.find { |r| r.name == role_name }
@@ -291,7 +287,6 @@ end
 # ---------------- Developer Commands ----------------
 
 bot.command(:devset) do |event, user_mention, stat, amount|
-  # 🔒 Dev-only check
   unless DEVELOPER_IDS.include?(event.user.id.to_s)
     event.respond "❌ This command is developer-only."
     next
@@ -386,7 +381,6 @@ bot.command(:hug) do |event, user_mention|
   $data[server_id][event.user.id.to_s] ||= {}
   $data[server_id][event.user.id.to_s]["hugs_given"] ||= 0
 
-  # ❤️ Self-hug
   if target.id == event.user.id
     embed = Discordrb::Webhooks::Embed.new(
       description: "❤️ **#{event.user.display_name}** hugs themselves gently.\nSelf-love is important too ✨",
@@ -406,7 +400,6 @@ bot.command(:hug) do |event, user_mention|
     nil
   end
 
-  # Increment hug counter
   $data[server_id][event.user.id.to_s]["hugs_given"] += 1
   hugs = $data[server_id][event.user.id.to_s]["hugs_given"]
 
@@ -439,7 +432,6 @@ bot.command(:ping) { |event| event.respond "Pong! 🏓" }
 bot.command(:level) do |event, user_mention|
   server_id = event.server.id.to_s
 
-  # Determine target user
   target =
     if user_mention
       match = user_mention.match(/<@!?(\d+)>/)
@@ -462,7 +454,6 @@ bot.command(:level) do |event, user_mention|
     "gems" => 0
   }
 
-  # Rank calculation
   ranked = $data[server_id].sort_by do |_, d|
     [-d["level"], -d["xp"]]
   end
@@ -599,7 +590,6 @@ bot.command(:daily) do |event|
 
   user = $data[server_id][user_id]
 
-  # Ensure last_daily always exists
   user["last_daily"] ||= 0
 
   elapsed = now - user["last_daily"]

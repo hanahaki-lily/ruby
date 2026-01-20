@@ -9,14 +9,12 @@ def register_message_xp(bot)
     user_id   = event.user.id.to_s
     now       = Time.now.to_i
 
-    # Cooldowns are per-server per-user
     xp_cooldowns[server_id] ||= {}
     xp_cooldowns[server_id][user_id] ||= 0
 
     next if now - xp_cooldowns[server_id][user_id] < XP_COOLDOWN
     xp_cooldowns[server_id][user_id] = now
 
-    # Ensure data exists
     ensure_user(server_id, user_id)
     user = $data[server_id][user_id]
 
@@ -69,12 +67,10 @@ def register_message_xp(bot)
 
       event.channel.send_embed('', embed)
 
-      # Remove old level roles
       event.user.roles
         .select { |r| LEVEL_ROLES.values.include?(r.name) }
         .each { |r| event.user.remove_role(r) }
 
-      # Assign highest valid role
       LEVEL_ROLES.sort.each do |lvl, role_name|
         next if new_level < lvl
 
