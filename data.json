@@ -1,13 +1,13 @@
 {
   "1438793172422623314": {
     "325512370107580417": {
-      "xp": 9093,
-      "level": 91,
-      "gems": 55,
+      "xp": 9983,
+      "level": 100,
+      "gems": 25,
       "last_daily": 1768836619,
       "hugs_given": 11,
       "cards": {
-        "Luna": 1,
+        "Luna": 2,
         "Quillson": 1,
         "Kody": 2,
         "Bill": 2,
@@ -38,7 +38,7 @@
         "Portia": 1,
         "Lucky": 1,
         "Violet": 1,
-        "Anabelle": 2,
+        "Anabelle": 3,
         "Leonardo": 1,
         "Papi": 1,
         "Carrie": 1,
@@ -51,13 +51,17 @@
         "Walker": 1,
         "Bam": 1,
         "Benjamin": 1,
-        "Punchy": 1
+        "Punchy": 1,
+        "Eugene": 1,
+        "Isabelle": 1,
+        "Digby": 1,
+        "Rasher": 1
       }
     },
     "325471423508250625": {
-      "xp": 1371,
-      "level": 14,
-      "gems": 138,
+      "xp": 1535,
+      "level": 16,
+      "gems": 43,
       "last_daily": 1768770720,
       "cards": {
         "Eugene": 1,
@@ -67,36 +71,61 @@
         "Sheldon": 1,
         "Anabelle": 1,
         "Saharah": 1,
-        "Bob": 1
+        "Bob": 1,
+        "Fauna": 1,
+        "Lottie": 1,
+        "Ed": 1
       }
     },
     "1147940825330876538": {
-      "xp": 1006,
-      "level": 11,
-      "gems": 296,
-      "cards": {}
+      "xp": 1128,
+      "level": 12,
+      "gems": 227,
+      "cards": {
+        "Bertha": 1,
+        "Bam": 1
+      }
     },
     "1340248739587166278": {
-      "xp": 726,
-      "level": 8,
-      "gems": 242,
+      "xp": 851,
+      "level": 9,
+      "gems": 278,
       "hugs_given": 1,
       "cards": {}
     },
     "452679089929846784": {
-      "xp": 2795,
-      "level": 28,
-      "gems": 865,
-      "last_daily": 1767953916,
+      "xp": 3573,
+      "level": 36,
+      "gems": 106,
+      "last_daily": 1768852166,
       "hugs_given": 2,
       "cards": {
-        "Resetti": 1
+        "Resetti": 1,
+        "Bea": 1,
+        "Anabelle": 1,
+        "Punchy": 1,
+        "Violet": 1,
+        "Carmen": 1,
+        "Leonardo": 1,
+        "Bonbon": 1,
+        "Isabelle": 2,
+        "Cally": 1,
+        "Freya": 1,
+        "Lopez": 1,
+        "Cleo": 1,
+        "Timbra": 1,
+        "Chester": 2,
+        "Sydney": 1,
+        "Camofrog": 1,
+        "Digby": 1,
+        "Bertha": 1,
+        "Kabuki": 1
       }
     },
     "183685881897549824": {
-      "xp": 347,
+      "xp": 355,
       "level": 4,
-      "gems": 149,
+      "gems": 152,
       "last_daily": 1767953968,
       "hugs_given": 3,
       "cards": {}

@@ -10,10 +10,8 @@ bot = Discordrb::Commands::CommandBot.new(
   prefix: PREFIX
 )
 
-# Load data
 $data = load_data
 
-# Register events
 require_relative 'events/ready_cleanup'
 require_relative 'events/message_xp'
 require_relative 'events/member_leave'
@@ -22,7 +20,6 @@ register_ready_cleanup(bot)
 register_message_xp(bot)
 register_member_leave(bot)
 
-# Register commands
 Dir[File.join(__dir__, 'commands', '*.rb')].each { |file| require file }
 
 register_level(bot)
