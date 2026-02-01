@@ -1,6 +1,6 @@
 require 'discordrb'
 require 'json'
-require_relative '../config/constants'
+require_relative 'src/config/constants'
 
 def register_card(bot)
   bot.command(:card) do |event, *args|

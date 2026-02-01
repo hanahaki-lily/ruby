@@ -1,6 +1,6 @@
 require 'discordrb'
 require 'json'
-require_relative '../config/constants'
+require_relative '../../config/constants'
 
 class Level
   attr_reader :name, :description

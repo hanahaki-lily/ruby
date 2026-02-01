@@ -6,31 +6,32 @@ require 'json'
 
 DATA_FILE = File.join(__dir__, 'data.json')
 
-# Load data from file, or start empty
 if File.exist?(DATA_FILE)
-  file_content = File.read(DATA_FILE)
-  begin
-    $data = JSON.parse(file_content)
-  rescue JSON::ParserError
+    file_content = File.read(DATA_FILE)
+    begin
+        $data = JSON.parse(file_content)
+    rescue JSON::ParserError
+        $data = {}
+        puts "[WARNING] data.json could not be parsed. Starting with empty data."
+    end
+    else
     $data = {}
-    puts "[WARNING] data.json could not be parsed. Starting with empty data."
-  end
-else
-  $data = {}
-  puts "[INFO] data.json not found. Starting with empty data."
+    puts "[INFO] data.json not found. Starting with empty data."
 end
 
 class ExtendedClient < Discordrb::Bot 
     attr_reader :commands, :buttons, :menus, :modals
 
-    # Initalise the client
+    # Initiate the client
     def initialize
 
-        if ENV["CLIENT_TOKEN"].empty? || ENV["CLIENT_ID"].empty?
+        # Check if there are no environmental variables setup
+        if ENV["CLIENT_TOKEN"].nil? || ENV["CLIENT_ID"].nil?
             Logger.notification(LogType::WARNING, "Environmental Variables have not been set correctly in the .env file!")
             exit 1
         end
 
+        # Prepare the discord client
         super(
             token: ENV["CLIENT_TOKEN"],
             client_id: ENV["CLIENT_ID"],
@@ -38,84 +39,72 @@ class ExtendedClient < Discordrb::Bot
             log_mode: :error
         )
 
-        # Initalise a Hash for all the required modules
+        # Define all the modules
         @commands = {}
         @buttons = {}
         @menus = {}
         @modals = {}
     end
 
-    # Loader for all the modules required
+    # Handler to load all the modules
     def loadModules()
-
-        # Initalise a "loaded" module counter (purely for logging)
         totalModules = 0
-
-        # Build the path to the source file
+        
+        # Build the path to the src folder
         srcPath = File.join(__dir__, "src").tr("\\", "/")
 
-        # Scan all the module folders for .rb files
+        # Create a search pattern for specific modules
         files = Dir.glob(File.join(srcPath, "{commands,events,interactions}/**/*.rb"))
 
-        # Exit the process if no files were found
+        # Check if there are no files => exit the process
         if files.empty?
             Logger.notification(LogType::CRITICAL, "No files were found in the specified modules.")
             exit 1
         end
 
-        # Loop through all of the files and cache them
+        # Loop through each file
         files.each do |file|
             begin
+
+                # Format the file to remove back-slashing (windows)
                 formattedFile = file.tr("\\", "/")
-                # Dynamically import the fle
+
+                # Load the file for saving
                 load formattedFile
 
-                # Convert the file name into the className
+                # Format the file to match the classname
                 className = File.basename(formattedFile, ".rb").split('_').map(&:capitalize).join
 
-                if Object.const_defined?(className)                             
-                    # Create a new instance of the module
+                # If the classname matches => Create a new instance of the class & save it
+                if Object.const_defined?(className)                                
                     component = Object.const_get(className).new
                 else
-                    Logger.notification(LogType::WARNING, "Class #{className} not found in #{formattedFile}")
+
+                    # If no class was found => skip it
                     next
                 end
 
-                # Split the file path into it's category and name
+                # Build the path from src path to the imported class
                 relativePath = formattedFile.sub("#{srcPath}/", "").split("/")
+
+                # Determine which category the class is in
                 category = relativePath.find{ |dir| ["interactions", "commands", "events"].include?(dir) }
 
-                # A case function for specific modules
+                # Handler for the category
                 case category
-                    # Handles modules that are in the "commands" directory
                     when "commands"
-                        # Check if the loaded command follows the specific structure
                         if component.respond_to?(:name) && component.name
-
-                            # Cache the loaded command to the client
                             @commands[component.name] = component
                             totalModules += 1
-                        else
-                            # Throw a notification if the file does not follow the format
-                            Logger.notification(LogType::WARNING, "Skipped #{className}: Missing @name attribute.")
                         end
-
-                    # Handles modules that are in the "interactions" directory
                     when "interactions"
-                        # Determine which interaction needs to be loaded "Buttons", "Modals" or "Menus"
                         subModule = relativePath.find{ |int| ["buttons", "menus", "modals"].include?(int) }
-
-                        # Cache the loaded interaction to the client
                         instance_variable_get("@#{subModule}")[component.name] = component
                         totalModules += 1
-
                     when "events"
-                        # execute the event
                         component.execute(self)
                         totalModules += 1
                 end
-
-            # If an error occurred during the loading process, display it
             rescue => error
                 Logger.error("Failed to load #{file}", error)
             end
@@ -123,78 +112,109 @@ class ExtendedClient < Discordrb::Bot
         Logger.notification(LogType::SYSTEM, "Loaded #{totalModules} modules.")
     end
 
-    # Function to handle any incoming interactions
     def handleInteractions()
-        # Detect when an interaction is created
+
+        # Listener for when an interaction was created
         self.interaction_create do |event|
 
+            # Determine the nme of the interaction
+            name = event.interaction.data ? event.interaction.data["name"] : nil
+            command = @commands[name.to_s]
+
             case event.interaction.type
-                # Handle when the interaction is a command
-                when 2
 
-                    # Fetch the command name
-                    commandName = event.interaction.data["name"] 
-            
-                    # Fetch the command from the cache
-                    command = @commands[commandName]
-
-                    # If the command exists then execute it
-                    if command
-                        begin
-                            command.execute(event)
-                        
-                        # If an error occurred => throw the error
-                        rescue => error
-                                Logger.error("Command Execution Failed", error)
-                                event.respond(content: "Sorry an unexpected error occurred when executing the command. Please contact the developer.", ephemeral: true)
-                        end
-                    else
-                        Logger.notification(LogType::SYSTEM, "Command: /#{commandName} was not found in the cache.");
-                        event.respond(content: "Command not found. If this was a mistake, please contact the developer.", ephemeral: true)
+            # Handle slash command executions
+            when 2
+                if command
+                    begin
+                        command.execute(event)
+                    rescue => error
+                        Logger.error("Command Execution Failed", error)
+                        event.respond(content: "An error occurred.", ephemeral: true)
                     end
+                end
 
-                # Handle if the interaction is a MessageComponent ("buttons" or "menus") (type 3)
-                when 3
-                        # Fetch the custom id from the interaction
-                        custom_id = event.interaction.data["custom_id"]
-
-                        # Fetch the module from the cache
-                        @buttons[custom_id]&.execute(event) || @menus[custom_id]&.execute(event)
-                
-                # Handle if the interaction is a Modal Submit (type 5)
-                when 5
-                    custom_id = event.interaction.data["custom_id"]
-                    modal = @modals[custom_id]
-
-                    if modal
-                        modal.execute(event)
-                    else
-                        Logger.notification(LogType::SYSTEM, "Modal ID: #{custom_id} not found in the cache.")
-                    end
+            # Handle autocompletion typing
+            when 4
+                if command && command.respond_to?(:handle_autocomplete)
+                    command.handle_autocomplete(event)
+                end
             end
         end
-    end 
 
-    # Function to register commands onto Discord
+        # Button Listener
+        self.button(nil) do |event|
+            handler = @buttons[event.custom_id] || @buttons.values.find { |button| event.custom_id.start_with?(button.name) }
+            handler&.execute(event)
+        end
+
+        # Menu listener
+        self.select_menu(nil) do |event|
+            @menus[event.custom_id]&.execute(event)
+        end
+
+        # Modal Listener
+        self.modal_submit(nil) do |event|
+            @modals[event.custom_id]&.execute(event)
+        end
+    end
+
+    # Handler for handling command registration
     def registerCommands()
+        payload = @commands.map do |name, cmd|
+            # Build the base command structure
+            data = {
+                name: name,
+                description: cmd.description || "No description",
+                type: 1
+            }
 
-        # Handle when the client is ready
-        self.ready do |event|
-            # Map through the commands to register them
-            @commands.each do |name, cmd|
-                self.register_application_command(
-                    name.to_sym, 
-                    cmd.description || "No description", 
-                )
+            # Add options if the command object has them
+            if cmd.respond_to?(:options) && cmd.options
+                data[:options] = cmd.options.map do |opt|
+                    {
+                        name: opt[:name],
+                        description: opt[:description],
+                        type: opt[:type],
+                        required: opt[:required] || false,
+                        autocomplete: opt[:autocomplete] || false
+                    }
+                end
             end
-            Logger.notification(LogType::SYSTEM, "Registered #{@commands.size} commands locally.")
+
+            # Return the data to be used in the payload
+            data
         end
+
+
+        Discordrb::API::Application.bulk_overwrite_guild_commands(
+            self.token,
+            ENV["CLIENT_ID"],
+
+            # The Moonlight Palace Guild ID
+            "1438793172422623314",
+            payload
+        )
+
+        # This is here to hard reset the bots cache if commands aren't showing up correctly
+        # Discordrb::API::Application.bulk_overwrite_global_commands(
+        #     self.token,
+        #     ENV["CLIENT_ID"],
+        #     []
+        # )
+
+        Logger.notification(LogType::SYSTEM, "Bulk-registered #{@commands.size} commands.")
     end
 end
 
-# Main Execution
 client = ExtendedClient.new
 client.loadModules
 client.handleInteractions
-client.registerCommands
+
+# Check if the registration flag was added
+if ARGV.include?("--r")
+    client.registerCommands
+else
+    Logger.notification(LogType::SYSTEM, "Running without registration. (Use --r to update command attributes/options)");
+end
 client.run

@@ -53,7 +53,7 @@ class MessageXp
 
         embed = Discordrb::Webhooks::Embed.new(
           title: "🌸 Level Up!",
-          description: "#{event.user.mention} reached **Level #{new_level}** ✨\n💎 **+#{reward_gems} Wish Gems**",
+          description: "#{event.user.mention} reached **Level #{new_level}** ✨\n☄️ **+#{reward_gems} Wish Gems** \n💎 **Total Gems: #{user_data["gems"]}**",
           color: EMBED_COLOR
         )
         embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: event.user.avatar_url)
